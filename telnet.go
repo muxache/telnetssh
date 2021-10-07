@@ -100,15 +100,16 @@ func (t *Telnet) get(command, expect string) ([]byte, error) {
 				return
 			}
 			resbuf = append(resbuf, buf[:n]...)
+			if regexp.MustCompile(command).Match(resbuf) {
+				commandSent = true
+			}
 			if regexp.MustCompile(expect).Match(buf[:n]) {
 				if commandSent {
 					ch <- nil
 					return
 				}
 			}
-			if regexp.MustCompile(command).Match(resbuf) {
-				commandSent = true
-			}
+
 		}
 
 	}()
