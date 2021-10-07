@@ -1,6 +1,7 @@
 package telnetssh
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"regexp"
@@ -100,7 +101,7 @@ func (t *Telnet) get(command, expect string) ([]byte, error) {
 				return
 			}
 			resbuf = append(resbuf, buf[:n]...)
-			if regexp.MustCompile(command).Match(resbuf) {
+			if bytes.Contains([]byte(command), resbuf) {
 				commandSent = true
 			}
 			if regexp.MustCompile(expect).Match(buf[:n]) {
