@@ -3,6 +3,7 @@ package telnetssh
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"regexp"
 	"time"
 
@@ -68,6 +69,7 @@ func (s *SSH) get(command, expect string) ([]byte, error) {
 	}
 	var (
 		resbuf      []byte
+		resstrings  [][]byte
 		commandSent bool
 	)
 
@@ -88,6 +90,7 @@ func (s *SSH) get(command, expect string) ([]byte, error) {
 				ch <- err
 				return
 			}
+			resstrings = append(resstrings, bytes.Split(buf, []byte{10, 13})...)
 			resbuf = append(resbuf, buf[:n]...)
 			if bytes.Contains([]byte(command), resbuf) {
 				commandSent = true
@@ -112,6 +115,10 @@ func (s *SSH) get(command, expect string) ([]byte, error) {
 				return resbuf, err
 			}
 		}
+		for _, r := range resstrings {
+			fmt.Println(string(r))
+		}
+
 		return resbuf, err
 	case <-time.After(s.timeoutCommand):
 		return resbuf, errors.New(command + " command timeout")
