@@ -90,7 +90,7 @@ func (s *SSH) get(command, expect string) ([]byte, error) {
 				ch <- err
 				return
 			}
-			resstrings = append(resstrings, bytes.Split(buf, []byte{10, 13})...)
+			resstrings = append(resstrings, bytes.Split(buf, []byte{13, 10})...)
 			resbuf = append(resbuf, buf[:n]...)
 			if bytes.Contains([]byte(command), resbuf) {
 				commandSent = true
