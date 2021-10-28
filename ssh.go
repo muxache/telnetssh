@@ -90,7 +90,7 @@ func (s *SSH) get(command, expect string) ([]byte, error) {
 				ch <- err
 				return
 			}
-			resstrings = append(resstrings, bytes.Split(buf, []byte{13, 10})...)
+			resstrings = append(resstrings, bytes.Split(buf[:n], []byte{13, 10})...)
 			resbuf = append(resbuf, buf[:n]...)
 			if bytes.Contains([]byte(command), resbuf) {
 				commandSent = true
@@ -118,7 +118,6 @@ func (s *SSH) get(command, expect string) ([]byte, error) {
 		for _, r := range resstrings {
 			fmt.Println(string(r))
 		}
-
 		return resbuf, err
 	case <-time.After(s.timeoutCommand):
 		return resbuf, errors.New(command + " command timeout")
